@@ -4,11 +4,8 @@ var mix = require('util-mix')
 var merge = require('merge-stream')
 var spritesmith = require('gulp.spritesmith')
 
-var builtin = require('./lib/builtin')
-
 exports = module.exports = gulpSpritesmith
 exports.util = require('./lib/util')
-exports.builtin = builtin
 
 function gulpSpritesmith(opts) {
   opts = opts || {}
@@ -78,7 +75,6 @@ function createSmithOption(sprite, icons) {
   var options = {
     imgName: sprite + '.png',
     cssName: sprite + '.css',
-    cssTemplate: builtin.css,
     cssSpritesheetName: 'sp-' + sprite,
   }
   if (hasRetinaIcon(icons)) {
