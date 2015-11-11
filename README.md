@@ -123,7 +123,6 @@ The following fields are set by default:
 var options = {
   imgName: sprite + '.png',
   cssName: sprite + '.css',
-  cssTemplate: builtin.css,
   cssSpritesheetName: 'sp-' + sprite,
 }
 
@@ -138,8 +137,6 @@ and the related icon files (vinyl file objects).
 Modify the options object passed in, or return a new one.
 
 ## Custom templates
-
-The default css template is `exports.builtin.css`.
 
 To specify custom templates,
 create a templater through `exports.util.createTemplate`,
@@ -334,12 +331,3 @@ rather than `.sp-sprite__name--pseduoClass`.
 
 **NOTE**: for retina icons,
 you should name them like `name--pseduoClass@2x.png`.
-
-### exports.builtin
-
-Type: `Object`
-
-Templates provided by default.
-
-Pick one of them, and set `options.spritesmith.cssTemplate` to apply it.
-
