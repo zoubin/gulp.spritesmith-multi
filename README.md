@@ -120,8 +120,9 @@ gulp.task('sprite', ['clean'], function () {
   // Generate our spritesheet
   var spriteData = gulp.src('default/**/*.png')
     .pipe(spritesmith({
-      spritesmith: function (options) {
-        options.imgPath = '../images/' + options.imgName
+      spritesmith: function (options, sprite, icons) {
+        options.cssName = 'sprites/_' + sprite + ".scss";
+        options.imgPath = '../images/' + options.imgName;
       }
     }))
 
@@ -174,8 +175,7 @@ var options = {
 You can override them through this option.
 
 If `Function`,
-it receives the default options,
-the sprite name specified by `options.to`
+it receives the default options and sprite, sprite-name
 and the related icon files (vinyl file objects).
 Modify the options object passed in, or return a new one.
 
