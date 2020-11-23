@@ -28,12 +28,12 @@ function gulpSpritesmith(opts) {
       return opts.to(file)
     }
     return path.basename(
-      path.dirname(file)
+      path.dirname(file.path)
     )
   }
 
   function write(file, _, next) {
-    var sprite = to(file.path)
+    var sprite = to(file)
     groups[sprite] = groups[sprite] || []
     groups[sprite].push(file)
     next()

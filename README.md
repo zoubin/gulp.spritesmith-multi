@@ -8,6 +8,12 @@
 
 A wrapper for [gulp.spritesmith](https://github.com/twolfson/gulp.spritesmith) to generate multiple sprites and stylesheets.
 
+## Breaking changes in 4.0.0
+
+We have changed the parameter passed to the function [`to(iconFile)`](#toiconfile) from a file path string to a [Vinyl file object](https://gulpjs.com/docs/en/api/vinyl/).
+
+This allows users to obtain more useful information about the files consumed by `gulp.src()` and this plugin.
+
 ## Example
 
 ```javascript
@@ -120,8 +126,9 @@ gulp.task('sprite', ['clean'], function () {
   // Generate our spritesheet
   var spriteData = gulp.src('default/**/*.png')
     .pipe(spritesmith({
-      spritesmith: function (options) {
-        options.imgPath = '../images/' + options.imgName
+      spritesmith: function (options, sprite, icons) {
+        options.cssName = 'sprites/_' + sprite + ".scss";
+        options.imgPath = '../images/' + options.imgName;
       }
     }))
 
@@ -151,6 +158,10 @@ Type: `Function`, `String`
 
 If `String`, you just get one sprite.
 
+If `Function`,
+it receives each icon file (vinyl file object).
+You should return a string as its name. See [Split sprites support](#split-sprites-support).
+
 By default, icons are grouped by their directory names.
 
 
@@ -174,8 +185,7 @@ var options = {
 You can override them through this option.
 
 If `Function`,
-it receives the default options,
-the sprite name specified by `options.to`
+it receives the default options and sprite, sprite-name
 and the related icon files (vinyl file objects).
 Modify the options object passed in, or return a new one.
 
@@ -440,6 +450,133 @@ hover.css
 
 Though there are default `width` and `height` in the CSS rules,
 you can override them and the background image will be resized automatically.
+
+## Split sprites support
+
+You can generate split sprites like the `split` option in [sprity/sprity § How to use split option](https://github.com/sprity/sprity#how-to-use-split-option):
+
+```javascript
+gulp.task('split', ['clean'], function () {
+  var opts = {
+    to: function (file) {
+      return path.dirname(file.relative)
+          .replace(/[\/\\ ]/g, '-')
+    },
+  }
+  return gulp.src('split/**/*.png')
+    .pipe(spritesmith(opts))
+    .pipe(gulp.dest('build'))
+})
+```
+
+input:
+
+```
+⌘ tree split
+split
+├── new
+│   ├── hover
+│   │   ├── sprite1@2x.png
+│   │   ├── sprite1--hover@2x.png
+│   │   ├── sprite1--hover.png
+│   │   ├── sprite1.png
+│   │   ├── sprite2@2x.png
+│   │   ├── sprite2.png
+│   │   ├── sprite3@2x.png
+│   │   └── sprite3.png
+│   ├── normal
+│   │   ├── sprite1.png
+│   │   ├── sprite2.png
+│   │   └── sprite3.png
+│   └── retina
+│       ├── sprite1@2x.png
+│       ├── sprite1.png
+│       ├── sprite2@2x.png
+│       ├── sprite2.png
+│       ├── sprite3@2x.png
+│       └── sprite3.png
+└── old
+    ├── hover
+    │   ├── sprite1@2x.png
+    │   ├── sprite1--hover@2x.png
+    │   ├── sprite1--hover.png
+    │   ├── sprite1.png
+    │   ├── sprite2@2x.png
+    │   ├── sprite2.png
+    │   ├── sprite3@2x.png
+    │   └── sprite3.png
+    ├── normal
+    │   ├── sprite1.png
+    │   ├── sprite2.png
+    │   └── sprite3.png
+    └── retina
+        ├── sprite1@2x.png
+        ├── sprite1.png
+        ├── sprite2@2x.png
+        ├── sprite2.png
+        ├── sprite3@2x.png
+        └── sprite3.png
+```
+
+output:
+
+```
+⌘ tree build/
+build
+├── new-hover@2x.png
+├── new-hover.css
+├── new-hover.png
+├── new-normal.css
+├── new-normal.png
+├── new-retina@2x.png
+├── new-retina.css
+├── new-retina.png
+├── old-hover@2x.png
+├── old-hover.css
+├── old-hover.png
+├── old-normal.css
+├── old-normal.png
+├── old-retina@2x.png
+├── old-retina.css
+└── old-retina.png
+```
+
+new-hover.css
+
+```css
+.sp-new-hover {
+  background-image: url(new-hover.png);
+}
+
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) {
+  .sp-new-hover {
+    background-image: url(new-hover@2x.png);
+    background-size: 150px 200px;
+  }
+}
+
+.sp-new-hover__sprite1:hover {
+  background-position: -100px 0px;
+  width: 50px;
+  height: 50px;
+}
+.sp-new-hover__sprite1 {
+  background-position: -100px -50px;
+  width: 50px;
+  height: 50px;
+}
+.sp-new-hover__sprite2 {
+  background-position: -100px -100px;
+  width: 50px;
+  height: 50px;
+}
+.sp-new-hover__sprite3 {
+  background-position: 0px 0px;
+  width: 100px;
+  height: 200px;
+}
+```
 
 ## Utils
 
