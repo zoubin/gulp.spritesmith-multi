@@ -31,6 +31,16 @@ test(
 )
 
 test(
+  'split',
+  runTest.bind(null, 'split', {
+    to: function (file) {
+      return path.dirname(file.relative)
+          .replace(/[\/\\ ]/g, '-')
+    },
+  })
+)
+
+test(
   'custom-template',
   runTest.bind(null, 'custom-template', {
     spritesmith: function (options, sprite) {
