@@ -8,6 +8,12 @@
 
 A wrapper for [gulp.spritesmith](https://github.com/twolfson/gulp.spritesmith) to generate multiple sprites and stylesheets.
 
+## Breaking changes in 4.0.0
+
+We have changed the parameter passed to the function [`to(iconFile)`](#toiconfile) from a file path string to a [Vinyl file object](https://gulpjs.com/docs/en/api/vinyl/).
+
+This allows users to obtain more useful information about the files consumed by `gulp.src()` and this plugin.
+
 ## Example
 
 ```javascript
@@ -151,6 +157,10 @@ Specify the name of the sprite into which the given icon should be included
 Type: `Function`, `String`
 
 If `String`, you just get one sprite.
+
+If `Function`,
+it receives each icon file (vinyl file object).
+You should return a string as its name.
 
 By default, icons are grouped by their directory names.
 
